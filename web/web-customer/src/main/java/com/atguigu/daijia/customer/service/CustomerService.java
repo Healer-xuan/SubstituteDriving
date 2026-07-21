@@ -8,5 +8,8 @@ public interface CustomerService {
     String login(String code);
 
     //获取登录用户信息
-    CustomerLoginVo getCustomerLoginInfo(String token);
+    //CustomerLoginVo getCustomerLoginInfo(String token);
+
+    //获取登录用户信息
+    CustomerLoginVo getCustomerLoginInfo2(Long customerId);
 }

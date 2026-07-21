@@ -67,11 +67,37 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
+
     /**
+     * 获取登录用户信息
+     * @param customerId
+     * @return
+     */
+    @Override
+    public CustomerLoginVo getCustomerLoginInfo2(Long customerId) {
+
+        //3.远程调用，根据用户id获取用户信息
+        Result<CustomerLoginVo> customerLoginVoResult = customerInfoFeignClient.getCustomerLoginInfo(customerId);
+        Integer code = customerLoginVoResult.getCode();
+        if(code != 200){
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+
+        CustomerLoginVo customerLoginVo = customerLoginVoResult.getData();
+        if (customerLoginVo == null){
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+
+        //4.返回用户信息
+        return customerLoginVo;
+    }
+
+
+
+    /*
      * 获取登录用户信息
      * @param token
      * @return
-     */
     @Override
     public CustomerLoginVo getCustomerLoginInfo(String token) {
         //2.根据token查询redis
@@ -96,4 +122,5 @@ public class CustomerServiceImpl implements CustomerService {
         //4.返回用户信息
         return customerLoginVo;
     }
+     */
 }

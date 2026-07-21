@@ -17,4 +17,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface DriverInfoFeignClient {
 
 
+    /**
+     * 微信小程序登录接口
+     * @param code
+     * @return
+     */
+    @GetMapping("/driver/info/login/{code}")
+    Result<Long> login(@PathVariable String code);
+
+
+    /**
+     * 获取司机登录信息
+     * @param driverId
+     * @return
+     */
+    @GetMapping("/driver/info/getDriverInfo/{driverId}")
+    Result<DriverLoginVo> getDriverLoginInfo(@PathVariable Long driverId);
 }

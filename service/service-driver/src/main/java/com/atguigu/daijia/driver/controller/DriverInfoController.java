@@ -1,9 +1,15 @@
 package com.atguigu.daijia.driver.controller;
 
+import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.driver.service.DriverInfoService;
+import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
+import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,8 +19,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value="/driver/info")
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class DriverInfoController {
-	
 
+    @Autowired
+    private DriverInfoService driverInfoService;
+
+    /**
+     * 微信小程序登录接口
+     * @param code
+     * @return
+     */
+    @Operation(summary = "小程序登录")
+    @GetMapping("/login/{code}")
+    public Result<Long> login(@PathVariable String code) {
+        return Result.ok(driverInfoService.login(code));
+    }
+
+
+    /**
+     * 获取司机登录信息
+     * @param driverId
+     * @return
+     */
+    @Operation(summary = "获取司机基本信息")
+    @GetMapping("/getDriverInfo/{driverId}")
+    public Result<DriverLoginVo> getDriverInfo(@PathVariable Long driverId) {
+        DriverLoginVo driverLoginVo = driverInfoService.getDriverInfo(driverId);
+        return Result.ok(driverLoginVo);
+    }
 
 }
 
