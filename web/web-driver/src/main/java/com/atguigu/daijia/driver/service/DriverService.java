@@ -1,5 +1,7 @@
 package com.atguigu.daijia.driver.service;
 
+import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
+
 public interface DriverService {
     /**
      * 微信小程序登录接口
@@ -7,4 +9,11 @@ public interface DriverService {
      * @return
      */
     String login(String code);
+
+
+    /**
+     * 获取司机认证信息
+     * @param driverId
+     */
+    DriverAuthInfoVo getDriverAuthInfo(Long driverId);
 }
