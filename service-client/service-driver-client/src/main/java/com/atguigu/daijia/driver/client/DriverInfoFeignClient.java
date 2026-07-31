@@ -42,4 +42,8 @@ public interface DriverInfoFeignClient {
      */
     @GetMapping("/driver/info/getDriverAuthInfo/{driverId}")
     Result<DriverAuthInfoVo> getDriverAuthInfo(@PathVariable Long driverId);
+
+
+    @PostMapping("/driver/info/updateDriverAuthInfo")
+    Result<Boolean> updateDriverAuthInfo(@RequestBody UpdateDriverAuthInfoForm updateDriverAuthInfoForm);
 }
