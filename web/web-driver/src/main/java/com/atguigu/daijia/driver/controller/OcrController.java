@@ -31,7 +31,7 @@ public class OcrController {
      * @return
      */
     @Operation(summary = "身份证识别")
-    //@XuanLogin
+    @XuanLogin
     @PostMapping("/idCardOcr")
     public Result<IdCardOcrVo> uploadDriverLicenseOcr(@RequestPart("file") MultipartFile file){
         return Result.ok(ocrService.idCardOcr(file));
@@ -43,7 +43,7 @@ public class OcrController {
      * @return
      */
     @Operation(summary = "驾驶证识别")
-    //@XuanLogin
+    @XuanLogin
     @PostMapping("/driverLicenseOcr")
     public Result<DriverLicenseOcrVo> driverLicenseOcr(@RequestPart("file") MultipartFile file){
         return Result.ok(ocrService.driverLicenseOcr(file));

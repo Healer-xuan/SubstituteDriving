@@ -170,6 +170,7 @@ rule "计算总金额"
         BigDecimal distanceFee = feeRuleResponse.getBaseDistanceFee().add(feeRuleResponse.getExceedDistance().multiply(feeRuleResponse.getExceedDistancePrice()));
         BigDecimal waitFee = new BigDecimal(feeRuleResponse.getExceedWaitMinute()).multiply(feeRuleResponse.getExceedWaitMinutePrice());
         BigDecimal longDistanceFee = feeRuleResponse.getExceedLongDistance().multiply(feeRuleResponse.getExceedLongDistancePrice());
+
         BigDecimal totalAmount = distanceFee.add(waitFee).add(longDistanceFee);
         feeRuleResponse.setDistanceFee(distanceFee);
         feeRuleResponse.setWaitFee(waitFee);
