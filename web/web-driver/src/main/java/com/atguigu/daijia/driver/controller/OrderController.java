@@ -4,6 +4,7 @@ import com.atguigu.daijia.common.login.XuanLogin;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.driver.service.OrderService;
+import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,5 +53,15 @@ public class OrderController {
         return Result.ok(orderService.findNewOrderQueueData(driverId));
     }
 
+
+    @Operation(summary = "查找司机端当前订单")
+    @XuanLogin
+    @GetMapping("/searchDriverCurrentOrder")
+    public Result<CurrentOrderInfoVo> searchDriverCurrentOrder(){
+        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
+        //TODO 先默认当前没有订单，后续完善
+        currentOrderInfoVo.setIsHasCurrentOrder(false);
+        return Result.ok(currentOrderInfoVo);
+    }
 }
 

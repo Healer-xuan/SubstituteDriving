@@ -88,7 +88,7 @@ public class NewOrderServiceImpl implements NewOrderService {
         //1. 根据jobId查询数据库，当前任务是否已经创建
         //如果没有创建，不往下执行
         LambdaQueryWrapper<OrderJob> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(OrderJob::getOrderId,jobId);
+        wrapper.eq(OrderJob::getJobId,jobId);
         OrderJob orderJob = orderJobMapper.selectOne(wrapper);
 
         if(orderJob == null){
@@ -140,7 +140,7 @@ public class NewOrderServiceImpl implements NewOrderService {
                 newOrderDataVo.setDistance(driver.getDistance());
                 newOrderDataVo.setCreateTime(newOrderTaskVo.getCreateTime());
                 //新订单保存司机的临时队列，Redis里面List集合
-                String key = RedisConstant.DRIVER_ORDER_REPEAT_LIST + driver.getDriverId();
+                String key = RedisConstant.DRIVER_ORDER_TEMP_LIST + driver.getDriverId();
                 redisTemplate.opsForList().leftPush(key, JSONObject.toJSONString(newOrderDataVo));
                 //过期时间1分钟
                 redisTemplate.expire(key, RedisConstant.DRIVER_ORDER_TEMP_LIST_EXPIRES_TIME, TimeUnit.MINUTES);

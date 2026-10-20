@@ -14,6 +14,10 @@ public interface NewOrderService {
      */
     Long addAndStartTask(NewOrderTaskVo newOrderTaskVo);
 
+    /**
+     * 执行任务，搜素附近代驾司机
+     * @param jobId
+     */
     void executeTask(long jobId);
 
     /**

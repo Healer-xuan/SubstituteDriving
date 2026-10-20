@@ -77,7 +77,7 @@ public class DriverController {
      */
     @Operation(summary = "修改司机认证信息")
     @XuanLogin
-    @GetMapping("/updateDriverAuthInfo")
+    @PostMapping("/updateDriverAuthInfo")
     public Result<Boolean> updateDriverAuthInfo(@RequestBody UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
         updateDriverAuthInfoForm.setDriverId(AuthContextHolder.getUserId());
         return Result.ok(driverService.updateDriverAuthInfo(updateDriverAuthInfoForm));
@@ -91,10 +91,63 @@ public class DriverController {
      */
     @Operation(summary = "创建司机人脸模型")
     @XuanLogin
-    @GetMapping("/creatDriverFaceModel")
+    @PostMapping("/creatDriverFaceModel")
     public Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm) {
         driverFaceModelForm.setDriverId(AuthContextHolder.getUserId());
         return Result.ok(driverService.creatDriverFaceModel(driverFaceModelForm));
+    }
+
+
+    /**
+     * 判断司机当日是否进行人脸识别
+     * @return
+     */
+    @Operation(summary = "判断司机当日是否进行人脸识别")
+    @XuanLogin
+    @GetMapping("/isFaceRecognition")
+    public Result<Boolean> isFaceRecognition(){
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.isFaceRecognition(driverId));
+    }
+
+
+    /**
+     * 验证司机人脸
+     * @param driverFaceModelForm
+     * @return
+     */
+    @Operation(summary = "验证司机人脸")
+    @XuanLogin
+    @PostMapping("/verifyDriverFace")
+    public Result<Boolean> verifyDriverFace(@RequestBody DriverFaceModelForm driverFaceModelForm){
+        driverFaceModelForm.setDriverId(AuthContextHolder.getUserId());
+        return Result.ok(driverService.verifyDriverFace(driverFaceModelForm));
+    }
+
+
+    /**
+     * 开始接单服务
+     * @return
+     */
+    @Operation(summary = "开始接单服务")
+    @XuanLogin
+    @GetMapping("/startService")
+    public Result<Boolean> startService(){
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.startService(driverId));
+    }
+
+
+    /**
+     * 停止接单服务
+     * @return
+     */
+    @Operation(summary = "停止接单服务")
+    @XuanLogin
+    @GetMapping("/stopService")
+    public Result<Boolean> stopService(){
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.stopService(driverId));
     }
 }
 
