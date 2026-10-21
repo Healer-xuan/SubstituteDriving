@@ -1,13 +1,16 @@
 package com.atguigu.daijia.customer.controller;
 
+import com.alibaba.nacos.plugin.auth.constant.Constants;
 import com.atguigu.daijia.common.login.XuanLogin;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.customer.service.OrderService;
+import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
 import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +31,12 @@ public class OrderController {
      * 查询乘客当前订单
      * @return
      */
-    //TODO 后续完善，目前假设乘客当前没有订单
     @Operation(summary = "查询乘客当前订单")
     @XuanLogin
     @GetMapping("/searchCustomerCurrentOrder")
     public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder(){
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
-        return Result.ok(currentOrderInfoVo);
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchCustomerCurrentOrder(customerId));
     }
 
 
@@ -77,5 +78,20 @@ public class OrderController {
     public Result<Integer> getOrderStatus(@PathVariable Long orderId){
         return Result.ok(orderService.getOrderStatus(orderId));
     }
+
+
+    /**
+     * 获取订单信息
+     * @param orderId
+     * @return
+     */
+    @Operation(summary = "获取订单信息")
+    @XuanLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId){
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(customerId,orderId));
+    }
+
 }
 

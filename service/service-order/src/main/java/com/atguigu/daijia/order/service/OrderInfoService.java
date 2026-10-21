@@ -2,6 +2,7 @@ package com.atguigu.daijia.order.service;
 
 import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface OrderInfoService extends IService<OrderInfo> {
@@ -27,4 +28,18 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @return
      */
     Boolean robNewOrder(Long driverId, Long orderId);
+
+    /**
+     * 查找乘客端当前订单
+     * @param customerId
+     * @return
+     */
+    CurrentOrderInfoVo searchCustomerCurrentOrder(Long customerId);
+
+    /**
+     * 司机端查找当前订单
+     * @param driverId
+     * @return
+     */
+    CurrentOrderInfoVo searchDriverCurrentOrder(Long driverId);
 }

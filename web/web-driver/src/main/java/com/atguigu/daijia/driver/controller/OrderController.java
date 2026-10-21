@@ -1,11 +1,13 @@
 package com.atguigu.daijia.driver.controller;
 
+import com.alibaba.nacos.plugin.auth.constant.Constants;
 import com.atguigu.daijia.common.login.XuanLogin;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.driver.service.OrderService;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
+import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -62,10 +64,8 @@ public class OrderController {
     @XuanLogin
     @GetMapping("/searchDriverCurrentOrder")
     public Result<CurrentOrderInfoVo> searchDriverCurrentOrder(){
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        //TODO 先默认当前没有订单，后续完善
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
-        return Result.ok(currentOrderInfoVo);
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchDriverCurrentOrder(driverId));
     }
 
 
@@ -79,6 +79,20 @@ public class OrderController {
     public Result<Boolean> robNewOrder(@PathVariable("orderId") Long orderId){
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.robNewOrder(driverId,orderId));
+    }
+
+
+    /**
+     * 获取订单信息
+     * @param orderId
+     * @return
+     */
+    @Operation(summary = "获取订单信息")
+    @XuanLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable("orderId") Long orderId){
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(driverId,orderId));
     }
 }
 

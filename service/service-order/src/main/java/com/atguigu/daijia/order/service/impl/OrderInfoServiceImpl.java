@@ -7,6 +7,7 @@ import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.entity.order.OrderStatusLog;
 import com.atguigu.daijia.model.enums.OrderStatus;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.order.mapper.OrderInfoMapper;
 import com.atguigu.daijia.order.mapper.OrderStatusLogMapper;
 import com.atguigu.daijia.order.service.OrderInfoService;
@@ -155,6 +156,87 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             }
         }
         return true;
+    }
+
+
+    /**
+     * 查询乘客端当前订单
+     * @param customerId
+     * @return
+     */
+    @Override
+    public CurrentOrderInfoVo searchCustomerCurrentOrder(Long customerId) {
+        //封装条件
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getCustomerId,customerId);
+
+        //各种状态
+        Integer[] statusArray = {OrderStatus.ACCEPTED.getStatus(),
+                OrderStatus.DRIVER_ARRIVED.getStatus(),
+                OrderStatus.UPDATE_CART_INFO.getStatus(),
+                OrderStatus.START_SERVICE.getStatus(),
+                OrderStatus.END_SERVICE.getStatus(),
+                OrderStatus.UNPAID.getStatus(),
+        };
+        wrapper.in(OrderInfo::getStatus,statusArray);
+
+        //获取最新的一条记录
+        wrapper.orderByDesc(OrderInfo::getId);
+        wrapper.last("limit 1");
+
+        //调用方法
+        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+
+        //封装到CurrentOrderInfoVo
+        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
+        if(orderInfo != null){
+            currentOrderInfoVo.setOrderId(orderInfo.getId());
+            currentOrderInfoVo.setStatus(orderInfo.getStatus());
+            currentOrderInfoVo.setIsHasCurrentOrder(true);
+        }else{
+            currentOrderInfoVo.setIsHasCurrentOrder(false);
+        }
+
+        return currentOrderInfoVo;
+    }
+
+
+    /**
+     * 司机端查找当前订单
+     * @param driverId
+     * @return
+     */
+    @Override
+    public CurrentOrderInfoVo searchDriverCurrentOrder(Long driverId) {
+        //封装条件
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getDriverId,driverId);
+
+        Integer[] statusArray = {OrderStatus.ACCEPTED.getStatus(),
+                OrderStatus.DRIVER_ARRIVED.getStatus(),
+                OrderStatus.UPDATE_CART_INFO.getStatus(),
+                OrderStatus.START_SERVICE.getStatus(),
+                OrderStatus.END_SERVICE.getStatus(),
+                OrderStatus.UNPAID.getStatus(),
+        };
+        wrapper.in(OrderInfo::getStatus,statusArray);
+        wrapper.orderByDesc(OrderInfo::getId);
+        //获取最新的一条记录
+        wrapper.last("limit 1");
+
+        //调用方法
+        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+
+        //封装到CurrentOrderInfoVo
+        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
+        if(orderInfo != null){
+            currentOrderInfoVo.setStatus(orderInfo.getStatus());
+            currentOrderInfoVo.setOrderId(orderInfo.getId());
+            currentOrderInfoVo.setIsHasCurrentOrder(true);
+        }else{
+            currentOrderInfoVo.setIsHasCurrentOrder(false);
+        }
+        return currentOrderInfoVo;
     }
 
 

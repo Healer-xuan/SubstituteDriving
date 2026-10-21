@@ -40,4 +40,6 @@ public interface CustomerInfoFeignClient {
      */
     @PostMapping("/customer/info/updateWxPhoneNumber")
     public Result<Boolean> updateWxPhoneNumber(@RequestBody UpdateWxPhoneForm updateWxPhoneForm);
+
+
 }

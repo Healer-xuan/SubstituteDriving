@@ -1,6 +1,8 @@
 package com.atguigu.daijia.customer.service.impl;
 
+import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.Result;
+import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.customer.service.OrderService;
 import com.atguigu.daijia.dispatch.client.NewOrderFeignClient;
 import com.atguigu.daijia.map.client.MapFeignClient;
@@ -13,6 +15,8 @@ import com.atguigu.daijia.model.form.rules.FeeRuleRequestForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
+import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import com.atguigu.daijia.model.vo.rules.FeeRuleResponseVo;
 import com.atguigu.daijia.order.client.OrderInfoFeignClient;
 import com.atguigu.daijia.rules.client.FeeRuleFeignClient;
@@ -124,5 +128,37 @@ public class OrderServiceImpl implements OrderService {
     public Integer getOrderStatus(Long orderId) {
         Result<Integer> orderStatus = orderInfoFeignClient.getOrderStatus(orderId);
         return orderStatus.getData();
+    }
+
+
+    /**
+     * 乘客端查找当前订单
+     * @param customerId
+     * @return
+     */
+    @Override
+    public CurrentOrderInfoVo searchCustomerCurrentOrder(Long customerId) {
+        return  orderInfoFeignClient.searchCustomerCurrentOrder(customerId).getData();
+    }
+
+
+    /**
+     * 获取订单信息
+     * @param customerId
+     * @param orderId
+     * @return
+     */
+    @Override
+    public OrderInfoVo getOrderInfo(Long customerId, Long orderId) {
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        //判断一下customerId
+        if(customerId != orderInfo.getCustomerId()){
+            throw new GuiguException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+
+        OrderInfoVo orderInfoVo = new OrderInfoVo();
+        BeanUtils.copyProperties(orderInfo,orderInfoVo);
+        orderInfoVo.setOrderId(orderId);
+        return orderInfoVo;
     }
 }

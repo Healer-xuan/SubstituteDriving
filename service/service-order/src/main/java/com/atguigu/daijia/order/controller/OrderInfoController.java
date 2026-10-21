@@ -1,7 +1,10 @@
 package com.atguigu.daijia.order.controller;
 
 import com.atguigu.daijia.common.result.Result;
+import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import com.atguigu.daijia.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,6 +55,43 @@ public class OrderInfoController {
     @GetMapping("/robNewOrder/{driverId}/{orderId}")
     public Result<Boolean> robNewOrder(@PathVariable("driverId") Long driverId,@PathVariable("orderId") Long orderId){
         return Result.ok(orderInfoService.robNewOrder(driverId,orderId));
+    }
+
+
+    /**
+     * 乘客端查找当前订单
+     * @param customerId
+     * @return
+     */
+    @Operation(summary = "乘客端查找当前订单")
+    @GetMapping("/searchCustomerCurrentOrder/{customerId}")
+    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder(@PathVariable Long customerId){
+        return Result.ok(orderInfoService.searchCustomerCurrentOrder(customerId));
+    }
+
+
+    /**
+     * 司机端查找当前订单
+     * @param driverId
+     * @return
+     */
+    @Operation(summary = "司机端查找当前订单")
+    @GetMapping("/searchDriverCurrentOrder/{driverId}")
+    public Result<CurrentOrderInfoVo> searchDriverCurrentOrder(@PathVariable Long driverId){
+        return Result.ok(orderInfoService.searchDriverCurrentOrder(driverId));
+    }
+
+
+    /**
+     * 获取订单信息
+     * @param orderId
+     * @return
+     */
+    @Operation(summary = "获取订单信息")
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfo> getOrderInfo(@PathVariable("orderId") Long orderId){
+        OrderInfo orderInfo = orderInfoService.getById(orderId);
+        return Result.ok(orderInfo);
     }
 
 }
