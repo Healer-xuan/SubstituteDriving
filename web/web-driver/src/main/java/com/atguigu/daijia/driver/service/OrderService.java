@@ -20,4 +20,12 @@ public interface OrderService {
      * @return
      */
     List<NewOrderDataVo> findNewOrderQueueData(Long driverID);
+
+
+    /**
+     * 司机抢单
+     * @param orderId
+     * @return
+     */
+    Boolean robNewOrder(Long driverId, Long orderId);
 }

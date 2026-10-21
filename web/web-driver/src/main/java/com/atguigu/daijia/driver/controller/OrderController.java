@@ -54,6 +54,10 @@ public class OrderController {
     }
 
 
+    /**
+     * 查找司机端当前订单
+     * @return
+     */
     @Operation(summary = "查找司机端当前订单")
     @XuanLogin
     @GetMapping("/searchDriverCurrentOrder")
@@ -62,6 +66,19 @@ public class OrderController {
         //TODO 先默认当前没有订单，后续完善
         currentOrderInfoVo.setIsHasCurrentOrder(false);
         return Result.ok(currentOrderInfoVo);
+    }
+
+
+    /**
+     * 司机抢单
+     * @param orderId
+     * @return
+     */
+    @Operation(summary = "司机抢单")
+    @GetMapping("/robNewOrder/{orderId}")
+    public Result<Boolean> robNewOrder(@PathVariable("orderId") Long orderId){
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.robNewOrder(driverId,orderId));
     }
 }
 

@@ -19,4 +19,12 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @return
      */
     Integer getOrderStatus(Long orderId);
+
+    /**
+     * 司机抢单
+     * @param driverId
+     * @param orderId
+     * @return
+     */
+    Boolean robNewOrder(Long driverId, Long orderId);
 }
