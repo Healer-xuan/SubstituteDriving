@@ -30,9 +30,9 @@ public class CosController {
     @Operation(summary = "文件上传")
     @XuanLogin
     @PostMapping(("/upload"))
-    public Result<CosUploadVo> uploadFile(@RequestPart("file") MultipartFile file,
+    public Result<CosUploadVo> upload(@RequestPart("file") MultipartFile file,
                                           @RequestParam(name = "path",defaultValue = "auth") String path){
-        CosUploadVo cosUploadVo = cosService.upload(file,path);
+        CosUploadVo cosUploadVo = cosService.uploadFile(file,path);
         return Result.ok(cosUploadVo);
     }
 }

@@ -8,7 +8,9 @@ import com.atguigu.daijia.map.service.LocationService;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
 import com.atguigu.daijia.model.form.map.SearchNearByDriverForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
+import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
+import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.*;
@@ -134,5 +136,38 @@ public class LocationServiceImpl implements LocationService {
         }
 
         return list;
+    }
+
+
+    /**
+     * 更新订单司机位置信息到Redis
+     * @param updateOrderLocationForm
+     * @return
+     */
+    @Override
+    public Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm) {
+        String key = RedisConstant.UPDATE_ORDER_LOCATION + updateOrderLocationForm.getOrderId();
+
+        OrderLocationVo orderLocationVo = new OrderLocationVo();
+        orderLocationVo.setLongitude(updateOrderLocationForm.getLongitude());
+        orderLocationVo.setLatitude(updateOrderLocationForm.getLatitude());
+
+        redisTemplate.opsForValue().set(key,orderLocationVo);
+
+        return true;
+    }
+
+
+    /**
+     * 乘客端获取司机经纬度位置
+     * @param orderId
+     * @return
+     */
+    @Override
+    public OrderLocationVo getCacheOrderLocation(Long orderId) {
+        //调用Redis查看
+        String key = RedisConstant.UPDATE_ORDER_LOCATION + orderId;
+        OrderLocationVo orderLocationVo = (OrderLocationVo)redisTemplate.opsForValue().get(key);
+        return orderLocationVo;
     }
 }

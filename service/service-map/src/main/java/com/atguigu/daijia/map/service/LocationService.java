@@ -2,7 +2,9 @@ package com.atguigu.daijia.map.service;
 
 import com.atguigu.daijia.model.form.map.SearchNearByDriverForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
+import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
+import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 
 import java.util.List;
 
@@ -28,4 +30,20 @@ public interface LocationService {
      * @return
      */
     List<NearByDriverVo> searchNearByDriver(SearchNearByDriverForm searchNearByDriverForm);
+
+
+    /**
+     * 更新订单司机位置信息到Redis
+     * @param updateOrderLocationForm
+     * @return
+     */
+    Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm);
+
+
+    /**
+     * 乘客端获取司机经纬度位置
+     * @param orderId
+     * @return
+     */
+    OrderLocationVo getCacheOrderLocation(Long orderId);
 }

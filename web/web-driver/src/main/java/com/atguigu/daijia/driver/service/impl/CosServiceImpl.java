@@ -25,7 +25,7 @@ public class CosServiceImpl implements CosService {
      * @return
      */
     @Override
-    public CosUploadVo upload(MultipartFile file, String path) {
+    public CosUploadVo uploadFile(MultipartFile file, String path) {
         Result<CosUploadVo> cosUploadVoResult = cosFeignClient.upload(file,path);
         CosUploadVo cosUploadVo = cosUploadVoResult.getData();
         return cosUploadVo;

@@ -8,7 +8,11 @@ import com.atguigu.daijia.customer.service.OrderService;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
 import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
+import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
+import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
+import com.atguigu.daijia.model.vo.map.DrivingLineVo;
+import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -91,6 +95,45 @@ public class OrderController {
     public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId){
         Long customerId = AuthContextHolder.getUserId();
         return Result.ok(orderService.getOrderInfo(customerId,orderId));
+    }
+
+
+    /**
+     * 获取订单司机信息(下单成功后司乘同显中乘客看到的司机基本信息)
+     * @param orderId
+     * @return
+     */
+    @Operation(summary = "获取订单司机信息)")
+    @XuanLogin
+    @GetMapping("/getDriverInfo/{orderId}")
+    public Result<DriverInfoVo> getDriverInfoOrder(@PathVariable Long orderId){
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getDriverInfoOrder(customerId,orderId));
+    }
+
+
+    /**
+     * 乘客端获取司机经纬度位置
+     * @param orderId
+     * @return
+     */
+    @Operation(summary = "司机赶往代驾起始点：获取订单经纬度位置")
+    @GetMapping("/getCacheOrderLocation/{orderId}")
+    public Result<OrderLocationVo> getCacheOrderLocation(@PathVariable Long orderId){
+        return Result.ok(orderService.getCacheOrderLocation(orderId));
+    }
+
+
+    /**
+     * 乘客端司乘同显
+     * @param calculateDrivingLineForm
+     * @return
+     */
+    @Operation(summary = "乘客端司乘同显(计算最佳驾驶路线)")
+    @XuanLogin
+    @PostMapping("/calculateDrivingLine")
+    public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm){
+        return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
     }
 
 }

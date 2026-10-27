@@ -3,6 +3,7 @@ package com.atguigu.daijia.order.controller;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import com.atguigu.daijia.order.service.OrderInfoService;
@@ -92,6 +93,31 @@ public class OrderInfoController {
     public Result<OrderInfo> getOrderInfo(@PathVariable("orderId") Long orderId){
         OrderInfo orderInfo = orderInfoService.getById(orderId);
         return Result.ok(orderInfo);
+    }
+
+
+    /**
+     * 司机到达起始点
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @Operation(summary = "司机到达起始地点")
+    @GetMapping("/driverArriveStartLocation/{orderId}/{driverId}")
+    public Result<Boolean> driverArriveStartLocation(@PathVariable("orderId") Long orderId,@PathVariable("driverId") Long driverId){
+        return Result.ok(orderInfoService.driverArriveStartLocation(orderId,driverId));
+    }
+
+
+    /**
+     * 司机更新代驾车辆信息
+     * @param updateOrderCartForm
+     * @return
+     */
+    @Operation(summary = "司机更新代驾车辆信息")
+    @PostMapping("/updateOrderCart")
+    public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm){
+        return Result.ok(orderInfoService.updateOrderCart(updateOrderCartForm));
     }
 
 }

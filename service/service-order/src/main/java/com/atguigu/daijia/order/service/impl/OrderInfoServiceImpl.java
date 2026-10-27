@@ -7,6 +7,7 @@ import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.entity.order.OrderStatusLog;
 import com.atguigu.daijia.model.enums.OrderStatus;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.order.mapper.OrderInfoMapper;
 import com.atguigu.daijia.order.mapper.OrderStatusLogMapper;
@@ -158,6 +159,41 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         return true;
     }
 
+    /**
+     * 基于"乐观锁"解决司机抢单问题"并发"问题
+     */
+//    public Boolean robNewOrder1(Long driverId, Long orderId){
+//        //判断订单是否存在，使用redis，减少数据库压力
+//        if(!redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK)){
+//            //说明不存在该标识，抢单失败
+//            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+//        }
+//
+//        //司机抢单
+//        //修改order_info表中的status状态值为 2(已接单) + 司机id + 司机接单时间
+//        //update order_info set status = 2,driverId = ?,acceptTime = ?
+//        // where id = ? and status = 1
+//        OrderInfo orderInfo = new OrderInfo();
+//        orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
+//        orderInfo.setDriverId(driverId);
+//        orderInfo.setAcceptTime(new Date());
+//
+//        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.eq(OrderInfo::getId,orderId);
+//        wrapper.eq(OrderInfo::getStatus,OrderStatus.WAITING_ACCEPT.getStatus());
+//
+//        //调用方法修改
+//        int rows = orderInfoMapper.update(orderInfo, wrapper);
+//        if(rows != 1){
+//            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+//        }
+//
+//        //删除抢单标识
+//        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK);
+//
+//        return true;
+//    }
+
 
     /**
      * 查询乘客端当前订单
@@ -241,37 +277,55 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
 
     /**
-     * 基于"乐观锁"解决司机抢单问题"并发"问题
+     * 司机到达起始点
+     * @param orderId
+     * @param driverId
+     * @return
      */
-//    public Boolean robNewOrder1(Long driverId, Long orderId){
-//        //判断订单是否存在，使用redis，减少数据库压力
-//        if(!redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK)){
-//            //说明不存在该标识，抢单失败
-//            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
-//        }
-//
-//        //司机抢单
-//        //修改order_info表中的status状态值为 2(已接单) + 司机id + 司机接单时间
-//        //update order_info set status = 2,driverId = ?,acceptTime = ?
-//        // where id = ? and status = 1
-//        OrderInfo orderInfo = new OrderInfo();
-//        orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
-//        orderInfo.setDriverId(driverId);
-//        orderInfo.setAcceptTime(new Date());
-//
-//        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
-//        wrapper.eq(OrderInfo::getId,orderId);
-//        wrapper.eq(OrderInfo::getStatus,OrderStatus.WAITING_ACCEPT.getStatus());
-//
-//        //调用方法修改
-//        int rows = orderInfoMapper.update(orderInfo, wrapper);
-//        if(rows != 1){
-//            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
-//        }
-//
-//        //删除抢单标识
-//        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK);
-//
-//        return true;
-//    }
+    @Override
+    public Boolean driverArriveStartLocation(Long orderId,Long driverId) {
+        //修改订单状态值、到达时间
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId,orderId);
+        wrapper.eq(OrderInfo::getDriverId,driverId);
+
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setStatus(OrderStatus.DRIVER_ARRIVED.getStatus());
+        orderInfo.setArriveTime(new Date());
+
+        //调用Mapper更新
+        int rows = orderInfoMapper.update(orderInfo, wrapper);
+        if(rows == 1){
+            return true;
+        }else{
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
+    }
+
+
+    /**
+     * 司机更新代驾车辆信息
+     * @param updateOrderCartForm
+     * @return
+     */
+    @Override
+    public Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm) {
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId,updateOrderCartForm.getOrderId());
+        wrapper.eq(OrderInfo::getDriverId,updateOrderCartForm.getDriverId());
+
+        OrderInfo orderInfo = new OrderInfo();
+        BeanUtils.copyProperties(updateOrderCartForm,orderInfo);
+        orderInfo.setStatus(OrderStatus.UPDATE_CART_INFO.getStatus());
+
+        //调用方法更新
+        int rows = orderInfoMapper.update(orderInfo, wrapper);
+        if(rows == 1){
+            return true;
+        }else{
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
+    }
+
+
 }

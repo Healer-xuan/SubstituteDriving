@@ -1,5 +1,7 @@
 package com.atguigu.daijia.driver.service;
 
-public interface FileService {
+import com.atguigu.daijia.model.vo.driver.CosUploadVo;
+import org.springframework.web.multipart.MultipartFile;
 
+public interface FileService {
 }

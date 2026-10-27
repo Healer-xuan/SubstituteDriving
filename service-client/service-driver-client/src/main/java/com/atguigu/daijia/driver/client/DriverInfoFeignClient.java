@@ -97,4 +97,13 @@ public interface DriverInfoFeignClient {
      */
     @GetMapping("/driver/info/updateServiceStatus/{driverId}/{status}")
     Result<Boolean> updateServiceStatus(@PathVariable("driverId") Long driverId,@PathVariable Integer status);
+
+
+    /**
+     * 获取订单司机信息(下单成功后司乘同显中乘客看到的司机基本信息)
+     * @param driverId
+     * @return
+     */
+    @GetMapping("/driver/info/getDriverInfoOrder/{driverId}")
+    Result<DriverInfoVo> getDriverInfoOrder(@PathVariable Long driverId);
 }

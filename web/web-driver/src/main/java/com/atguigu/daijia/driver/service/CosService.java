@@ -12,5 +12,6 @@ public interface CosService {
      * @param path
      * @return
      */
-    CosUploadVo upload(MultipartFile file, String path);
+    CosUploadVo uploadFile(MultipartFile file, String path);
+
 }

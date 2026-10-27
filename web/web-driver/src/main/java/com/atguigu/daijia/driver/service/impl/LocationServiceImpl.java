@@ -6,8 +6,12 @@ import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.LocationService;
 import com.atguigu.daijia.map.client.LocationFeignClient;
+import com.atguigu.daijia.map.client.MapFeignClient;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
+import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
+import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Autowired
     private DriverInfoFeignClient driverInfoFeignClient;
+
+    @Autowired
+    private MapFeignClient mapFeignClient;
 
     /**
      * 更新司机的位置信息
@@ -44,5 +51,16 @@ public class LocationServiceImpl implements LocationService {
             //司机没有接单
             throw new GuiguException(ResultCodeEnum.NO_START_SERVICE);
         }
+    }
+
+
+    /**
+     * 更新订单司机位置信息到Redis
+     * @param updateOrderLocationForm
+     * @return
+     */
+    @Override
+    public Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm) {
+        return locationFeignClient.updateOrderLocationToCache(updateOrderLocationForm).getData();
     }
 }

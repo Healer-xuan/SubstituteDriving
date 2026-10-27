@@ -5,6 +5,7 @@ import com.atguigu.daijia.model.entity.driver.DriverSet;
 import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
+import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -77,4 +78,12 @@ public interface DriverInfoService extends IService<DriverInfo> {
      * @return
      */
     Boolean updateServiceStatus(Long driverId, Integer status);
+
+
+    /**
+     * 获取订单司机信息(下单成功后司乘同显中乘客看到的司机基本信息)
+     * @param driverId
+     * @return
+     */
+    DriverInfoVo getDriverInfoOrder(Long driverId);
 }

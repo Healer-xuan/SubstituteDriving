@@ -5,7 +5,11 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.dispatch.client.NewOrderFeignClient;
 import com.atguigu.daijia.driver.service.OrderService;
+import com.atguigu.daijia.map.client.MapFeignClient;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
+import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
+import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
+import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
@@ -27,6 +31,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private NewOrderFeignClient newOrderFeignClient;
+
+    @Autowired
+    private MapFeignClient mapFeignClient;
 
     /**
      * 查询订单状态
@@ -85,5 +92,38 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderInfo,orderInfoVo);
         orderInfoVo.setOrderId(orderId);
         return orderInfoVo;
+    }
+
+    /**
+     * 司机端司乘同显
+     * @param calculateDrivingLineForm
+     * @return
+     */
+    @Override
+    public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
+        return mapFeignClient.calculateDrivingLine(calculateDrivingLineForm).getData();
+    }
+
+
+    /**
+     * 司机到达起始点
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean driverArriveStartLocation(Long orderId, Long driverId) {
+        return orderInfoFeignClient.driverArriveStartLocation(orderId,driverId).getData();
+    }
+
+
+    /**
+     * 司机更新代驾车辆信息
+     * @param updateOrderCartForm
+     * @return
+     */
+    @Override
+    public Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm) {
+        return orderInfoFeignClient.updateOrderCart(updateOrderCartForm).getData();
     }
 }
