@@ -1,9 +1,12 @@
 package com.atguigu.daijia.driver.service;
 
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
+import com.atguigu.daijia.model.form.map.OrderServiceLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
+
+import java.util.List;
 
 public interface LocationService {
 
@@ -22,4 +25,12 @@ public interface LocationService {
      * @return
      */
     Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm);
+
+
+    /**
+     * 批量保存代驾服务订单位置
+     * @param orderLocationServiceFormList
+     * @return
+     */
+    Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderLocationServiceFormList);
 }

@@ -1,5 +1,6 @@
 package com.atguigu.daijia.map.service;
 
+import com.atguigu.daijia.model.form.map.OrderServiceLocationForm;
 import com.atguigu.daijia.model.form.map.SearchNearByDriverForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
@@ -46,4 +47,12 @@ public interface LocationService {
      * @return
      */
     OrderLocationVo getCacheOrderLocation(Long orderId);
+
+
+    /**
+     * 批量保存代驾服务订单位置
+     * @param orderLocationServiceFormList
+     * @return
+     */
+    Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderLocationServiceFormList);
 }

@@ -7,6 +7,7 @@ import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.entity.order.OrderStatusLog;
 import com.atguigu.daijia.model.enums.OrderStatus;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.form.order.StartDriveForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.order.mapper.OrderInfoMapper;
@@ -319,6 +320,32 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderInfo.setStatus(OrderStatus.UPDATE_CART_INFO.getStatus());
 
         //调用方法更新
+        int rows = orderInfoMapper.update(orderInfo, wrapper);
+        if(rows == 1){
+            return true;
+        }else{
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
+
+    }
+
+
+    /**
+     * 开始代驾服务
+     * @param startDriveForm
+     * @return
+     */
+    @Override
+    public Boolean StartDrive(StartDriveForm startDriveForm) {
+        //修改状态，根据订单ID和司机ID
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId,startDriveForm.getOrderId());
+        wrapper.eq(OrderInfo::getDriverId,startDriveForm.getDriverId());
+
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setStatus(OrderStatus.START_SERVICE.getStatus());
+        orderInfo.setStartServiceTime(new Date());
+
         int rows = orderInfoMapper.update(orderInfo, wrapper);
         if(rows == 1){
             return true;
