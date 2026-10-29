@@ -10,6 +10,7 @@ import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
 import com.atguigu.daijia.model.vo.map.OrderLocationVo;
+import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -101,6 +102,18 @@ public class LocationController {
     @PostMapping("/saveOrderServiceLocation")
     public Result<Boolean> saveOrderServiceLocation(@RequestBody List<OrderServiceLocationForm> orderLocationServiceFormList){
         return Result.ok(locationService.saveOrderServiceLocation(orderLocationServiceFormList));
+    }
+
+
+    /**
+     * 获取代驾服务订单最后一个位置信息
+     * @param orderId
+     * @return
+     */
+    @Operation(summary = "获取代驾服务订单最后一个位置信息")
+    @GetMapping("/getOrderServiceLastLocation/{orderId}")
+    public Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable("orderId") Long orderId){
+        return Result.ok(locationService.getOrderServiceLastLocation(orderId));
     }
 }
 

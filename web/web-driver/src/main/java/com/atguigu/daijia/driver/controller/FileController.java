@@ -18,15 +18,30 @@ public class FileController {
 
     @Autowired
     private CosService cosService;
+    @Autowired
+    private FileService fileService;
 
-    //文件上传接口
+//    //文件上传接口
+//    @Operation(summary = "上传")
+//    //@GuiguLogin
+//    @PostMapping("/upload")
+//    public Result<String> upload(@RequestPart("file") MultipartFile file,
+//                                      @RequestParam(name = "path",defaultValue = "auth") String path) {
+//        CosUploadVo cosUploadVo = cosService.uploadFile(file,path);
+//        String showUrl = cosUploadVo.getShowUrl();
+//        return Result.ok(showUrl);
+//    }
+
+
+    /**
+     * 上传车内录音文件
+     * @param file
+     * @return
+     */
     @Operation(summary = "上传")
-    //@GuiguLogin
     @PostMapping("/upload")
-    public Result<String> upload(@RequestPart("file") MultipartFile file,
-                                      @RequestParam(name = "path",defaultValue = "auth") String path) {
-        CosUploadVo cosUploadVo = cosService.uploadFile(file,path);
-        String showUrl = cosUploadVo.getShowUrl();
-        return Result.ok(showUrl);
+    public Result<String> upload(@RequestPart("file") MultipartFile file) {
+        String url = fileService.upload(file);
+        return Result.ok(url);
     }
 }

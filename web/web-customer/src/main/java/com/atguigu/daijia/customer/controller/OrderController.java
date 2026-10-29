@@ -13,6 +13,7 @@ import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.map.OrderLocationVo;
+import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -134,6 +135,19 @@ public class OrderController {
     @PostMapping("/calculateDrivingLine")
     public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm){
         return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
+    }
+
+
+    /**
+     * 获取代驾服务订单最后一个位置信息
+     * @param orderId
+     * @return
+     */
+    @Operation(summary = "获取代驾服务订单最后一个位置信息")
+    @XuanLogin
+    @GetMapping("/getOrderServiceLastLocation/{orderId}")
+    public Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable("orderId") Long orderId){
+        return Result.ok(orderService.getOrderServiceLastLocation(orderId));
     }
 
 }

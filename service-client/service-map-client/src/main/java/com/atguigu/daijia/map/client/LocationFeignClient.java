@@ -7,6 +7,7 @@ import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
 import com.atguigu.daijia.model.vo.map.OrderLocationVo;
+import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -70,4 +71,12 @@ public interface LocationFeignClient {
     @PostMapping("/map/location/saveOrderServiceLocation")
     Result<Boolean> saveOrderServiceLocation(@RequestBody List<OrderServiceLocationForm> orderLocationServiceFormList);
 
+
+    /**
+     * 获取代驾服务订单最后一个位置信息
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/getOrderServiceLastLocation/{orderId}")
+    Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable("orderId") Long orderId);
 }
