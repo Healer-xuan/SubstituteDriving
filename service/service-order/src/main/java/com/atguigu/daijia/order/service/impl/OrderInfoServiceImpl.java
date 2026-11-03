@@ -368,4 +368,21 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
 
+    /**
+     * 根据时间段获取订单数
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @Override
+    public Long getOrderNumByTime(String startTime, String endTime) {
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.ge(OrderInfo::getStartServiceTime,startTime);
+        wrapper.lt(OrderInfo::getEndServiceTime,endTime);
+
+        Long count = orderInfoMapper.selectCount(wrapper);
+        return count;
+    }
+
+
 }

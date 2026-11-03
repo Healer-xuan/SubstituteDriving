@@ -69,4 +69,13 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @return
      */
     Boolean StartDrive(StartDriveForm startDriveForm);
+
+
+    /**
+     * 根据时间段获取订单数
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    Long getOrderNumByTime(String startTime, String endTime);
 }
