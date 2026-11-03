@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @FeignClient(value = "service-map")
@@ -79,4 +80,13 @@ public interface LocationFeignClient {
      */
     @GetMapping("/getOrderServiceLastLocation/{orderId}")
     Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable("orderId") Long orderId);
+
+
+    /**
+     * 代驾服务：计算订单实际里程
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/calculateOrderRealDistance/{orderId}")
+    Result<BigDecimal> calculateOrderRealDistance(@PathVariable Long orderId);
 }

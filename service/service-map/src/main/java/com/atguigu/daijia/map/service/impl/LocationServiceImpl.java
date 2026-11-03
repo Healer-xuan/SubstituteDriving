@@ -3,6 +3,7 @@ package com.atguigu.daijia.map.service.impl;
 import com.atguigu.daijia.common.constant.RedisConstant;
 import com.atguigu.daijia.common.constant.SystemConstant;
 import com.atguigu.daijia.common.result.Result;
+import com.atguigu.daijia.common.util.LocationUtil;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.map.repository.OrderServiceLocationRepository;
 import com.atguigu.daijia.map.service.LocationService;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.*;
 import org.springframework.data.geo.Point;
@@ -232,5 +234,54 @@ public class LocationServiceImpl implements LocationService {
         BeanUtils.copyProperties(orderServiceLocation,orderServiceLastLocationVo);
 
         return orderServiceLastLocationVo;
+    }
+
+
+    /**
+     * 代驾服务：计算订单实际里程
+     * @param orderId
+     * @return
+     */
+    @Override
+    public BigDecimal calculateOrderRealDistance(Long orderId) {
+        //1 根据订单id获取代驾订单位置信息，根据创建时间排序(升序)
+        //查询Mongodb
+
+        //第一种方式：
+        OrderServiceLocation orderServiceLocation = new OrderServiceLocation();
+        orderServiceLocation.setOrderId(orderId);
+        Example<OrderServiceLocation> example = Example.of(orderServiceLocation);
+        Sort sort = Sort.by(Sort.Direction.ASC, "createTime");
+        List<OrderServiceLocation> list = orderServiceLocationRepository.findAll(example, sort);
+
+        //第二种方式： MongoRepository只需要 按照规则 在MongoRepository中把查询方法创建出来就可以了
+        //总体规则：
+        //1 查询方法名称 以 get  |  find  | read开头
+        //2 后面查询字段名称，满足驼峰式命名，比如OrderId
+        //3 字段查询条件添加关键字，比如Like  OrderBy   Asc
+        // 具体编写 ： 根据订单id获取代驾订单位置信息，根据创建时间排序（升序）
+//        List<OrderServiceLocation> list =
+//                orderServiceLocationRepository.findByOrderIdOrderByCreateTimeAsc(orderId);
+
+
+        //2 遍历list集合，得到每个位置信息，计算两个位置距离
+        //把计算所有距离相加操作
+        double realDistance = 0;
+        if(!CollectionUtils.isEmpty(list)){
+            for (int i = 0, size = list.size() - 1; i <  size; i++) {
+                OrderServiceLocation location1 = list.get(i);
+                OrderServiceLocation location2 = list.get(i + 1);
+
+                //调用工具类计算位置距离
+                double distance = LocationUtil.getDistance(location1.getLatitude().doubleValue(),
+                                                           location1.getLongitude().doubleValue(),
+                                                           location1.getLatitude().doubleValue(),
+                                                           location1.getLongitude().doubleValue());
+                realDistance += distance;
+            }
+        }
+
+        //返回最终计算实际距离
+        return new BigDecimal(realDistance);
     }
 }
