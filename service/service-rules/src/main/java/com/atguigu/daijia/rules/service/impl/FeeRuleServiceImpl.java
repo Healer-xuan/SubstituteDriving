@@ -26,17 +26,17 @@ public class FeeRuleServiceImpl implements FeeRuleService {
 
     /**
      * 计算订单费用
-     * @param calculateOrderFeeForm
+     * @param FeeRuleRequestForm
      * @return
      */
     @Override
-    public FeeRuleResponseVo calculateOrderFee(FeeRuleRequestForm calculateOrderFeeForm) {
+    public FeeRuleResponseVo calculateOrderFee(FeeRuleRequestForm FeeRuleRequestForm) {
         //封装输入对象
         FeeRuleRequest feeRuleRequest = new FeeRuleRequest();
-        feeRuleRequest.setDistance(calculateOrderFeeForm.getDistance());
-        Date startTime = calculateOrderFeeForm.getStartTime();
+        feeRuleRequest.setDistance(FeeRuleRequestForm.getDistance());
+        Date startTime = FeeRuleRequestForm.getStartTime();
         feeRuleRequest.setStartTime(new DateTime(startTime).toString("HH:mm:ss"));
-        feeRuleRequest.setWaitMinute(calculateOrderFeeForm.getWaitMinute());
+        feeRuleRequest.setWaitMinute(FeeRuleRequestForm.getWaitMinute());
 
         //Drools使用
         KieSession kieSession = kieContainer.newKieSession();

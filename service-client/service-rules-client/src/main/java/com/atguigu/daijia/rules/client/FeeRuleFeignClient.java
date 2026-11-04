@@ -13,9 +13,9 @@ public interface FeeRuleFeignClient {
 
     /**
      * 计算订单费用
-     * @param calculateOrderFeeForm
+     * @param feeRuleRequestForm
      * @return
      */
     @PostMapping("/rules/fee/calculateOrderFee")
-    Result<FeeRuleResponseVo> calculateOrderFee(@RequestBody FeeRuleRequestForm calculateOrderFeeForm);
+    Result<FeeRuleResponseVo> calculateOrderFee(@RequestBody FeeRuleRequestForm feeRuleRequestForm);
 }

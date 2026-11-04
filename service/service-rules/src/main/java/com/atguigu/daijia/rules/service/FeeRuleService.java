@@ -7,8 +7,8 @@ public interface FeeRuleService {
 
     /**
      * 计算订单费用
-     * @param calculateOrderFeeForm
+     * @param FeeRuleRequestForm
      * @return
      */
-    FeeRuleResponseVo calculateOrderFee(FeeRuleRequestForm calculateOrderFeeForm);
+    FeeRuleResponseVo calculateOrderFee(FeeRuleRequestForm FeeRuleRequestForm);
 }

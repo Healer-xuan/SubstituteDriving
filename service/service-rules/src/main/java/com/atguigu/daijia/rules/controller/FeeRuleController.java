@@ -25,13 +25,13 @@ public class FeeRuleController {
 
     /**
      * 计算订单费用
-     * @param calculateOrderFeeForm
+     * @param FeeRuleRequestForm
      * @return
      */
     @Operation(summary = "计算订单费用")
     @PostMapping("/calculateOrderFee")
-    public Result<FeeRuleResponseVo> calculateOrderFee(@RequestBody FeeRuleRequestForm calculateOrderFeeForm){
-        FeeRuleResponseVo feeRuleResponseVo = feeRuleService.calculateOrderFee(calculateOrderFeeForm);
+    public Result<FeeRuleResponseVo> calculateOrderFee(@RequestBody FeeRuleRequestForm FeeRuleRequestForm){
+        FeeRuleResponseVo feeRuleResponseVo = feeRuleService.calculateOrderFee(FeeRuleRequestForm);
         return Result.ok(feeRuleResponseVo);
     }
 }

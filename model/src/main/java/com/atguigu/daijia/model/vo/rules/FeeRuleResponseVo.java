@@ -6,7 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class FeeRuleResponseVo {
+public class  FeeRuleResponseVo {
 
     @Schema(description = "费用规则ID")
     private Long feeRuleId;

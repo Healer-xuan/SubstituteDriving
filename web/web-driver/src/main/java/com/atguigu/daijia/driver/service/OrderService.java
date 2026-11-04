@@ -1,6 +1,7 @@
 package com.atguigu.daijia.driver.service;
 
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
+import com.atguigu.daijia.model.form.order.OrderFeeForm;
 import com.atguigu.daijia.model.form.order.StartDriveForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
@@ -80,4 +81,12 @@ public interface OrderService {
      * @return
      */
     Boolean StartDrive(StartDriveForm startDriveForm);
+
+
+    /**
+     * 结束代驾服务更新订单账单
+     * @param orderFeeForm
+     * @return
+     */
+    Boolean endDrive(OrderFeeForm orderFeeForm);
 }

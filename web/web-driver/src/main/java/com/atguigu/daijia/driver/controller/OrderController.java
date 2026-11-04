@@ -6,7 +6,9 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.driver.service.OrderService;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
+import com.atguigu.daijia.model.form.order.OrderFeeForm;
 import com.atguigu.daijia.model.form.order.StartDriveForm;
+import com.atguigu.daijia.model.form.order.UpdateOrderBillForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
@@ -152,6 +154,21 @@ public class OrderController {
         Long driverId = AuthContextHolder.getUserId();
         startDriveForm.setDriverId(driverId);
         return Result.ok(orderService.StartDrive(startDriveForm));
+    }
+
+
+    /**
+     * 结束代驾服务更新订单账单
+     * @param orderFeeForm
+     * @return
+     */
+    @Operation(summary = "结束代驾服务更新订单账单")
+    @XuanLogin
+    @PostMapping("/endDrive")
+    public Result<Boolean> endDrive(@RequestBody OrderFeeForm orderFeeForm){
+        Long driverId = AuthContextHolder.getUserId();
+        orderFeeForm.setDriverId(driverId);
+        return Result.ok(orderService.endDrive(orderFeeForm));
     }
 }
 
