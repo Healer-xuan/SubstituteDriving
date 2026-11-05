@@ -33,7 +33,7 @@ public interface LocationFeignClient {
      * @param driverId
      * @return
      */
-    @DeleteMapping("/map/location/removeDriverLocation{driverId}")
+    @DeleteMapping("/map/location/removeDriverLocation/{driverId}")
     Result<Boolean> removeDriverLocation(@PathVariable("driverId") Long driverId);
 
 
@@ -78,7 +78,7 @@ public interface LocationFeignClient {
      * @param orderId
      * @return
      */
-    @GetMapping("/getOrderServiceLastLocation/{orderId}")
+    @GetMapping("/map/location/getOrderServiceLastLocation/{orderId}")
     Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable("orderId") Long orderId);
 
 
@@ -87,6 +87,6 @@ public interface LocationFeignClient {
      * @param orderId
      * @return
      */
-    @GetMapping("/calculateOrderRealDistance/{orderId}")
+    @GetMapping("/map/location/calculateOrderRealDistance/{orderId}")
     Result<BigDecimal> calculateOrderRealDistance(@PathVariable Long orderId);
 }

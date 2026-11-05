@@ -52,7 +52,7 @@ public class LocationController {
      * @return
      */
     @Operation(summary = "关闭接单服务: 删除司机经纬度位置")
-    @DeleteMapping("/removeDriverLocation{driverId}")
+    @DeleteMapping("/removeDriverLocation/{driverId}")
     public Result<Boolean> removeDriverLocation(@PathVariable Long driverId){
         return Result.ok(locationService.removeDriverLocation(driverId));
     }

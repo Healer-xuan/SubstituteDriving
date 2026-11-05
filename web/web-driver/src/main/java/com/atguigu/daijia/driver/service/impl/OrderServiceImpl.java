@@ -1,8 +1,10 @@
 package com.atguigu.daijia.driver.service.impl;
 
+import com.atguigu.daijia.common.constant.SystemConstant;
 import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
+import com.atguigu.daijia.common.util.LocationUtil;
 import com.atguigu.daijia.dispatch.client.NewOrderFeignClient;
 import com.atguigu.daijia.driver.service.OrderService;
 import com.atguigu.daijia.map.client.LocationFeignClient;
@@ -18,6 +20,8 @@ import com.atguigu.daijia.model.form.rules.ProfitsharingRuleRequestForm;
 import com.atguigu.daijia.model.form.rules.RewardRuleRequest;
 import com.atguigu.daijia.model.form.rules.RewardRuleRequestForm;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
+import com.atguigu.daijia.model.vo.map.OrderLocationVo;
+import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
@@ -142,8 +146,25 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public Boolean driverArriveStartLocation(Long orderId, Long driverId) {
+        //判断，防止刷单
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+
+        //司机当前位置
+        OrderLocationVo orderLocationVo = locationFeignClient.getCacheOrderLocation(orderId).getData();
+
+        //司机当前位置 和 代驾开始位置距离
+        //调用LocationUtil工具类计算距离
+        double distance = LocationUtil.getDistance(orderLocationVo.getLatitude().doubleValue(),
+                orderLocationVo.getLongitude().doubleValue(),
+                orderInfo.getStartPointLatitude().doubleValue(),
+                orderInfo.getStartPointLongitude().doubleValue());
+        if(distance > SystemConstant.DRIVER_START_LOCATION_DISTION){
+            throw new GuiguException(ResultCodeEnum.DRIVER_START_LOCATION_DISTION_ERROR);
+        }
+
         return orderInfoFeignClient.driverArriveStartLocation(orderId,driverId).getData();
     }
+
 
 
     /**
@@ -181,6 +202,17 @@ public class OrderServiceImpl implements OrderService {
             throw new GuiguException(ResultCodeEnum.ILLEGAL_REQUEST);
         }
 
+        //防止刷单
+        OrderServiceLastLocationVo orderServiceLastLocationVo = locationFeignClient.getOrderServiceLastLocation(orderFeeForm.getOrderId()).getData();
+
+        //司机当前位置 距离 结束代驾位置
+        double distance = LocationUtil.getDistance(orderInfo.getEndPointLatitude().doubleValue(),
+                                                   orderInfo.getEndPointLongitude().doubleValue(),
+                                                   orderServiceLastLocationVo.getLatitude().doubleValue(),
+                                                   orderServiceLastLocationVo.getLongitude().doubleValue());
+        if(distance > SystemConstant.DRIVER_END_LOCATION_DISTION){
+            throw new GuiguException(ResultCodeEnum.DRIVER_END_LOCATION_DISTION_ERROR);
+        }
 
         //2. 计算订单实际里程
         BigDecimal realDistance = locationFeignClient.calculateOrderRealDistance(orderFeeForm.getOrderId()).getData();
