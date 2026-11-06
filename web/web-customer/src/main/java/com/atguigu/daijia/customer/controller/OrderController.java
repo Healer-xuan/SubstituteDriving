@@ -9,6 +9,7 @@ import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
 import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
+import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
@@ -16,7 +17,9 @@ import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +151,45 @@ public class OrderController {
     @GetMapping("/getOrderServiceLastLocation/{orderId}")
     public Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable("orderId") Long orderId){
         return Result.ok(orderService.getOrderServiceLastLocation(orderId));
+    }
+
+
+    /**
+     * 获取乘客订单分页列表
+     * @param page
+     * @param limit
+     * @return
+     */
+    @Operation(summary = "获取乘客订单分页列表")
+    @XuanLogin
+    @GetMapping("findCustomerOrderPage/{page}/{limit}")
+    public Result<PageVo> findCustomerOrderPage(@Parameter(name = "page", description = "当前页码", required = true)
+                                                @PathVariable Long page,
+                                                @Parameter(name = "limit", description = "每页记录数", required = true)
+                                                @PathVariable Long limit){
+        Long customerId = AuthContextHolder.getUserId();
+        PageVo pageVo = orderService.findCustomerOrderPage(customerId,page,limit);
+        return Result.ok(pageVo);
+    }
+
+
+    /**
+     * 获取司机订单分页列表
+     * @param page
+     * @param limit
+     * @return
+     */
+    @Operation(summary = "获取乘客订单分页列表")
+    @XuanLogin
+    @GetMapping("findDriverOrderPage/{page}/{limit}")
+    public Result<PageVo> findDriverOrderPage(@Parameter(name = "page", description = "当前页码", required = true)
+                                              @PathVariable Long page,
+                                              @Parameter(name = "limit", description = "每页记录数", required = true)
+                                              @PathVariable Long limit){
+
+        Long driverId = AuthContextHolder.getUserId();
+        PageVo pageVo = orderService.findDriverOrderPage(driverId,page,limit);
+        return Result.ok(pageVo);
     }
 
 }
