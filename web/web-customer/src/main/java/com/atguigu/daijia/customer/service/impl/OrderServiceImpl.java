@@ -9,6 +9,7 @@ import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.map.client.LocationFeignClient;
 import com.atguigu.daijia.map.client.MapFeignClient;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
+import com.atguigu.daijia.model.enums.OrderStatus;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
 import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
@@ -22,6 +23,7 @@ import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.atguigu.daijia.model.vo.order.OrderBillVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import com.atguigu.daijia.model.vo.rules.FeeRuleResponseVo;
 import com.atguigu.daijia.order.client.OrderInfoFeignClient;
@@ -166,9 +168,25 @@ public class OrderServiceImpl implements OrderService {
             throw new GuiguException(ResultCodeEnum.ILLEGAL_REQUEST);
         }
 
+        OrderBillVo orderBillVo = null;
+        //乘客获取账单
+        if(orderInfo.getStatus() >= OrderStatus.END_SERVICE.getStatus()){
+            //获取账单信息
+            orderBillVo = orderInfoFeignClient.getOrderBillInfo(orderId).getData();
+        }
+
+        //获取司机信息
+        DriverInfoVo driverInfoVo = null;
+        Long driverId = orderInfo.getDriverId();
+        if (driverId != null){
+            driverInfoVo = driverInfoFeignClient.getDriverInfoOrder(driverId).getData();
+        }
+
         OrderInfoVo orderInfoVo = new OrderInfoVo();
         BeanUtils.copyProperties(orderInfo,orderInfoVo);
         orderInfoVo.setOrderId(orderId);
+        orderInfoVo.setOrderBillVo(orderBillVo);
+        orderInfoVo.setDriverInfoVo(driverInfoVo);
         return orderInfoVo;
     }
 

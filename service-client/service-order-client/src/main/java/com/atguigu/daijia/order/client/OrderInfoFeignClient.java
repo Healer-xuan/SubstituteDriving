@@ -8,6 +8,8 @@ import com.atguigu.daijia.model.form.order.UpdateOrderBillForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.atguigu.daijia.model.vo.order.OrderBillVo;
+import com.atguigu.daijia.model.vo.order.OrderProfitsharingVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -147,4 +149,32 @@ public interface OrderInfoFeignClient {
     Result<PageVo> findDriverOrderPage(@PathVariable("driverId") Long driverId,
                                        @PathVariable("page") Long page,
                                        @PathVariable("limit") Long limit);
+
+
+    /**
+     * 根据订单id获取实际账单信息
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/order/info/getOrderBillInfo/{orderId}")
+    Result<OrderBillVo> getOrderBillInfo(@PathVariable Long orderId);
+
+
+    /**
+     * 根据订单id获取实际分账信息
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/order/info/getOrderProfitsharing/{orderId}")
+    Result<OrderProfitsharingVo> getOrderProfitsharing(@PathVariable Long orderId);
+
+
+    /**
+     * 司机发送账单(本质就是修改订单状态值)
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @GetMapping("/order/info/sendOrderBillInfo/{orderId}/{driverId}")
+    Result<Boolean> sendOrderBillInfo(@PathVariable Long orderId,@PathVariable Long driverId);
 }

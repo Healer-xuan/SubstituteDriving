@@ -89,4 +89,12 @@ public interface OrderService {
      * @return
      */
     Boolean endDrive(OrderFeeForm orderFeeForm);
+
+
+    /**
+     * 司机发送账单(本质就是修改订单状态值)
+     * @param orderId
+     * @return
+     */
+    Boolean sendOrderBillInfo(Long orderId, Long driverId);
 }

@@ -10,6 +10,7 @@ import com.atguigu.daijia.driver.service.OrderService;
 import com.atguigu.daijia.map.client.LocationFeignClient;
 import com.atguigu.daijia.map.client.MapFeignClient;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
+import com.atguigu.daijia.model.enums.OrderStatus;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
 import com.atguigu.daijia.model.form.order.OrderFeeForm;
 import com.atguigu.daijia.model.form.order.StartDriveForm;
@@ -22,9 +23,7 @@ import com.atguigu.daijia.model.form.rules.RewardRuleRequestForm;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
-import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
-import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
-import com.atguigu.daijia.model.vo.order.OrderInfoVo;
+import com.atguigu.daijia.model.vo.order.*;
 import com.atguigu.daijia.model.vo.rules.FeeRuleResponseVo;
 import com.atguigu.daijia.model.vo.rules.ProfitsharingRuleResponseVo;
 import com.atguigu.daijia.model.vo.rules.RewardRuleResponseVo;
@@ -124,9 +123,21 @@ public class OrderServiceImpl implements OrderService {
             throw new GuiguException(ResultCodeEnum.ILLEGAL_REQUEST);
         }
 
+
+
+        OrderBillVo orderBillVo = null;
+        OrderProfitsharingVo orderProfitsharingVo = null;
+        if(orderInfo.getStatus() >= OrderStatus.END_SERVICE.getStatus()){
+            //司机端获取账单、分账信息
+            orderBillVo = orderInfoFeignClient.getOrderBillInfo(orderId).getData();
+            orderProfitsharingVo = orderInfoFeignClient.getOrderProfitsharing(orderId).getData();
+        }
+
         OrderInfoVo orderInfoVo = new OrderInfoVo();
         BeanUtils.copyProperties(orderInfo,orderInfoVo);
         orderInfoVo.setOrderId(orderId);
+        orderInfoVo.setOrderBillVo(orderBillVo);
+        orderInfoVo.setOrderProfitsharingVo(orderProfitsharingVo);
         return orderInfoVo;
     }
 
@@ -292,7 +303,6 @@ public class OrderServiceImpl implements OrderService {
             return profitsharingRuleResponseVo;
         });
 
-
         //合并
         CompletableFuture.allOf(
                 orderInfoCompletableFuture,
@@ -303,13 +313,11 @@ public class OrderServiceImpl implements OrderService {
                 profitsharingRuleResponseVoCompletableFuture
         ).join();
 
-
         //获取执行结果
         BigDecimal realDistance = realDistanceCompletableFuture.get();
         FeeRuleResponseVo feeRuleResponseVo = feeRuleResponseVoCompletableFuture.get();
         RewardRuleResponseVo rewardRuleResponseVo = rewardRuleResponseVoCompletableFuture.get();
         ProfitsharingRuleResponseVo profitsharingRuleResponseVo = profitsharingRuleResponseVoCompletableFuture.get();
-
 
         //6. 封装实体类，结束代驾更新订单，添加账单和分账信息
         UpdateOrderBillForm updateOrderBillForm = new UpdateOrderBillForm();
@@ -336,5 +344,16 @@ public class OrderServiceImpl implements OrderService {
         orderInfoFeignClient.endDrive(updateOrderBillForm);
 
         return true;
+    }
+
+
+    /**
+     * 司机发送账单(本质就是修改订单状态值)
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean sendOrderBillInfo(Long orderId, Long driverId) {
+        return orderInfoFeignClient.sendOrderBillInfo(orderId,driverId).getData();
     }
 }
