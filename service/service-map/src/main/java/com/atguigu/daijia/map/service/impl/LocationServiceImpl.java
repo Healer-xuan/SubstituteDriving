@@ -284,6 +284,6 @@ public class LocationServiceImpl implements LocationService {
         //返回最终计算实际距离
         //注意：LocationUtil.getDistance 返回的是【米】，而费用规则(FeeRule.drl)里的距离单位是【公里】
         //这里必须除以1000，否则里程会被放大1000倍，费用计算全错
-        return BigDecimal.valueOf(realDistance / 1000).setScale(2, RoundingMode.HALF_UP);
+        return BigDecimal.valueOf(realDistance / 1000).setScale(3, RoundingMode.HALF_UP);
     }
 }

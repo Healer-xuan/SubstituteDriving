@@ -2,6 +2,7 @@ package com.atguigu.daijia.order.mapper;
 
 import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.vo.order.OrderListVo;
+import com.atguigu.daijia.model.vo.order.OrderPayVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -26,4 +27,13 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @return
      */
     IPage<OrderListVo> selectDriverOrderPage(Page<OrderInfo> pageParam, Long driverId);
+
+
+    /**
+     * 获取订单支付信息
+     * @param orderNo
+     * @param customerId
+     * @return
+     */
+    OrderPayVo selectOrderPayVo(String orderNo, Long customerId);
 }

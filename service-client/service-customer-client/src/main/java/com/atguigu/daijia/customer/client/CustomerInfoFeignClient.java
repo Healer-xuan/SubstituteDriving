@@ -42,4 +42,13 @@ public interface CustomerInfoFeignClient {
     public Result<Boolean> updateWxPhoneNumber(@RequestBody UpdateWxPhoneForm updateWxPhoneForm);
 
 
+    /**
+     * 获取客户OpenId
+     * @param customerId
+     * @return
+     */
+    @GetMapping("/getCustomerOpenId")
+    Result<String> getCustomerOpenId(@PathVariable Long customerId);
+
+
 }

@@ -6,9 +6,7 @@ import com.atguigu.daijia.model.form.order.StartDriveForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderBillForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.base.PageVo;
-import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
-import com.atguigu.daijia.model.vo.order.OrderBillVo;
-import com.atguigu.daijia.model.vo.order.OrderProfitsharingVo;
+import com.atguigu.daijia.model.vo.order.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -134,4 +132,29 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @return
      */
     Boolean sendOrderBillInfo(Long orderId, Long driverId);
+
+
+    /**
+     * 获取订单支付信息
+     * @param orderNo
+     * @param customerId
+     * @return
+     */
+    OrderPayVo getOrderPayVo(String orderNo, Long customerId);
+
+
+    /**
+     * 更改订单支付状态
+     * @param orderNo
+     * @return
+     */
+    Boolean updateOrderPayStatus(String orderNo);
+
+
+    /**
+     * 获取订单的系统奖励
+     * @param orderNo
+     * @return
+     */
+    OrderRewardVo getOrderRewardFee(String orderNo);
 }

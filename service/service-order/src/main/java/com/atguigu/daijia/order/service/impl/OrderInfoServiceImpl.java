@@ -10,10 +10,7 @@ import com.atguigu.daijia.model.form.order.StartDriveForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderBillForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.base.PageVo;
-import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
-import com.atguigu.daijia.model.vo.order.OrderBillVo;
-import com.atguigu.daijia.model.vo.order.OrderListVo;
-import com.atguigu.daijia.model.vo.order.OrderProfitsharingVo;
+import com.atguigu.daijia.model.vo.order.*;
 import com.atguigu.daijia.order.mapper.OrderBillMapper;
 import com.atguigu.daijia.order.mapper.OrderInfoMapper;
 import com.atguigu.daijia.order.mapper.OrderProfitsharingMapper;
@@ -520,6 +517,83 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }else {
             throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
         }
+    }
+
+
+    /**
+     * 获取订单支付信息
+     * @param orderNo
+     * @param customerId
+     * @return
+     */
+    @Override
+    public OrderPayVo getOrderPayVo(String orderNo, Long customerId) {
+        OrderPayVo orderPayVo = orderInfoMapper.selectOrderPayVo(orderNo,customerId);
+        if(orderPayVo != null){
+            String content = orderPayVo.getStartLocation() + "到" + orderPayVo.getEndLocation();
+            orderPayVo.setContent(content);
+        }
+        return orderPayVo;
+    }
+
+
+    /**
+     * 更改订单支付状态
+     * @param orderNo
+     * @return
+     */
+    @Override
+    public Boolean updateOrderPayStatus(String orderNo) {
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getOrderNo,orderNo);
+        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+        if(orderInfo == null && orderInfo.getStatus() == OrderStatus.PAID.getStatus()){
+            return true;
+        }
+        //2 更新状态
+        LambdaQueryWrapper<OrderInfo> updateWrapper = new LambdaQueryWrapper<>();
+        updateWrapper.eq(OrderInfo::getOrderNo,orderNo);
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        updateOrderInfo.setStatus(OrderStatus.PAID.getStatus());
+        updateOrderInfo.setPayTime(new Date());
+
+        int rows = orderInfoMapper.update(updateOrderInfo, updateWrapper);
+
+        if(rows == 1) {
+            return true;
+        } else {
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
+    }
+
+
+    /**
+     * 获取订单的系统奖励
+     * @param orderNo
+     * @return
+     */
+    @Override
+    public OrderRewardVo getOrderRewardFee(String orderNo) {
+        //根据订单编号查询订单表
+        OrderInfo orderInfo =
+                orderInfoMapper.selectOne(
+                        new LambdaQueryWrapper<OrderInfo>()
+                                .eq(OrderInfo::getOrderNo, orderNo)
+                                .select(OrderInfo::getId,OrderInfo::getDriverId));
+
+        //根据订单id查询系统奖励表
+        OrderBill orderBill =
+                orderBillMapper.selectOne(new LambdaQueryWrapper<OrderBill>()
+                        .eq(OrderBill::getOrderId, orderInfo.getId())
+                        .select(OrderBill::getRewardFee));
+
+        //封装到vo里面
+        OrderRewardVo orderRewardVo = new OrderRewardVo();
+        orderRewardVo.setOrderId(orderInfo.getId());
+        orderRewardVo.setDriverId(orderInfo.getDriverId());
+        orderRewardVo.setRewardFee(orderBill.getRewardFee());
+        return orderRewardVo;
     }
 
 
