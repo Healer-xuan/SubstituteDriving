@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
-"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
 <mapper namespace="com.atguigu.daijia.coupon.mapper.CouponInfoMapper">
@@ -27,6 +27,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			info.expire_time,
 			info.describe
 		from coupon_info info
+        left join
+             (select cc.coupon_id ,cc.customer_id ,count(customer_id) cnt
+              from customer_coupon cc
+              where cc.customer_id = 1 group by cc.coupon_id ,cc.customer_id ) cus_coup on info.id=cus_coup.coupon_id
 		where
 		    info.status = 1
 			and info.receive_count &lt; info.publish_count
@@ -36,7 +40,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		order by info.id desc
     </select>
 
-	<select id="findNoUsePage" resultType="com.atguigu.daijia.model.vo.coupon.NoUseCouponVo">
+	<select id="findNoUsePage" resultType="com.atguigu.daijia.model.vo.coupon.NoReceiveCouponVo">
 		select
 			info.id,
 			info.coupon_type,
@@ -83,7 +87,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<update id="updateReceiveCount">
-		update coupon_info set receive_count = receive_count + 1 where id = #{id}
+		update coupon_info set receive_count = receive_count + 1 where id = #{couponId} and receive_count &lt; publish_count
 	</update>
 
 	<update id="updateReceiveCountByLimit">
