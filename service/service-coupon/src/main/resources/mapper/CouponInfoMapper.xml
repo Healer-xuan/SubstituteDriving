@@ -40,7 +40,7 @@
 		order by info.id desc
     </select>
 
-	<select id="findNoUsePage" resultType="com.atguigu.daijia.model.vo.coupon.NoReceiveCouponVo">
+	<select id="findNoUsePage" resultType="com.atguigu.daijia.model.vo.coupon.NoUseCouponVo">
 		select
 			info.id,
 			info.coupon_type,

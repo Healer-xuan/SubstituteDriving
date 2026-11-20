@@ -3,12 +3,16 @@ package com.atguigu.daijia.customer.service.impl;
 import com.atguigu.daijia.coupon.client.CouponFeignClient;
 import com.atguigu.daijia.customer.service.CouponService;
 import com.atguigu.daijia.model.vo.base.PageVo;
+import com.atguigu.daijia.model.vo.coupon.AvailableCouponVo;
 import com.atguigu.daijia.model.vo.coupon.NoReceiveCouponVo;
 import com.atguigu.daijia.model.vo.coupon.NoUseCouponVo;
 import com.atguigu.daijia.model.vo.coupon.UsedCouponVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -67,5 +71,18 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public Boolean receive(Long customerId, Long couponId) {
         return couponFeignClient.receive(customerId,couponId).getData();
+    }
+
+
+
+    /**
+     * 获取未使用的最佳优惠卷信息
+     * @param customerId
+     * @param orderAmount
+     * @return
+     */
+    @Override
+    public List<AvailableCouponVo> findAvailableCoupon(Long customerId, BigDecimal orderAmount) {
+        return couponFeignClient.findAvailableCoupon(customerId,orderAmount).getData();
     }
 }
